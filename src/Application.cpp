@@ -11,10 +11,6 @@
 	x;\
 	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
-#define RGLCall(returnValue, x) GLClearError();\
-	returnValue = x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
 
 static void GLClearError()
 {
@@ -71,7 +67,7 @@ static ShaderPrgramSource ParseShader(const std::string& filepath)
 
 static unsigned int CompileShader(unsigned int type, const std::string& source)
 {
-	RGLCall(unsigned int id, glCreateShader(type));
+	GLCall(unsigned int id = glCreateShader(type));
 	const char* src = source.c_str();
 	GLCall(glShaderSource(id, 1, &src, nullptr));
 	GLCall(glCompileShader(id));
@@ -94,7 +90,7 @@ static unsigned int CompileShader(unsigned int type, const std::string& source)
 
 static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
-	RGLCall(unsigned int program, glCreateProgram());
+	GLCall(unsigned int program = glCreateProgram());
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
@@ -128,6 +124,8 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
+
+	glfwSwapInterval(5);
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
@@ -169,13 +167,29 @@ int main(void)
 	unsigned int shader = CreateShader(source.VertexShaderSource, source.FragmentShaderSource);
 	GLCall(glUseProgram(shader));
 
+	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+	ASSERT(location != -1);
+
+	float r = 0.0f;
+	float step = 0.05f;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+		if (r > 1.0f)
+		{
+			step = -0.05f;
+		}
+		else if (r < 0.0f)
+		{
+			step = 0.05f;
+		}
+		r += step;
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
