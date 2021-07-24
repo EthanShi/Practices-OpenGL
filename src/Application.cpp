@@ -138,30 +138,65 @@ int main(void)
 		std::cout << glGetString(GL_VERSION) << std::endl;
 	}
 
-	float positions[] = {
-		-0.5f, -0.5f,
-		 0.5f, -0.5f,
-		 0.5f,  0.5f,
-		-0.5f,  0.5f
-	};
+	unsigned int vao1;
+	GLCall(glGenVertexArrays(1, &vao1));
+	GLCall(glBindVertexArray(vao1));
+	{
+		float positions[] = {
+			-0.5f, -0.5f,
+			 0.5f, -0.5f,
+			 0.5f,  0.5f,
+			-0.5f,  0.5f
+		};
 
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
+		unsigned int indices[] = {
+			0, 1, 2,
+			2, 3, 0
+		};
 
-	unsigned int buffer;
-	GLCall(glGenBuffers(1, &buffer));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
+		unsigned int vbo;
+		GLCall(glGenBuffers(1, &vbo));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
 
-	unsigned int ibo;
-	GLCall(glGenBuffers(1, &ibo));
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+		unsigned int ebo;
+		GLCall(glGenBuffers(1, &ebo));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
-	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+	}
+
+	unsigned int vao2;
+	GLCall(glGenVertexArrays(1, &vao2));
+	GLCall(glBindVertexArray(vao2));
+	{
+		float positions[] = {
+			-0.5f, -0.5f,
+			 0.5f, -0.5f,
+			 0.5f,  0.5f,
+			-0.5f,  0.5f
+		};
+
+		unsigned int indices[] = {
+			1, 2, 3,
+			2, 3, 0
+		};
+
+		unsigned int vbo;
+		GLCall(glGenBuffers(1, &vbo));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
+
+		unsigned int ebo;
+		GLCall(glGenBuffers(1, &ebo));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+
+		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+	}
 
 	ShaderPrgramSource source = ParseShader("res/shader/firstTriangle.shader");
 	unsigned int shader = CreateShader(source.VertexShaderSource, source.FragmentShaderSource);
@@ -169,6 +204,9 @@ int main(void)
 
 	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
 	ASSERT(location != -1);
+
+	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+
 
 	float r = 0.0f;
 	float step = 0.05f;
@@ -184,10 +222,12 @@ int main(void)
 		if (r > 1.0f)
 		{
 			step = -0.05f;
+			GLCall(glBindVertexArray(vao1));
 		}
 		else if (r < 0.0f)
 		{
 			step = 0.05f;
+			GLCall(glBindVertexArray(vao2));
 		}
 		r += step;
 
