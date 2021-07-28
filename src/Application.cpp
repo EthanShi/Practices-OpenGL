@@ -5,28 +5,9 @@
 #include <string>
 #include <sstream>
 
-#define ASSERT(x) if(!(x)) __debugbreak();
-
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL Error] (" << std::hex << "0x" << error << "): " << function << 
-			" " << file << ":" << line << std::endl;
-		return false;
-	}
-	return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 
 struct ShaderPrgramSource
@@ -154,15 +135,8 @@ int main(void)
 			2, 3, 0
 		};
 
-		unsigned int vbo;
-		GLCall(glGenBuffers(1, &vbo));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
-
-		unsigned int ebo;
-		GLCall(glGenBuffers(1, &ebo));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+		VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
+		IndexBuffer ibo(indices, 6);
 
 		GLCall(glEnableVertexAttribArray(0));
 		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
@@ -184,15 +158,8 @@ int main(void)
 			2, 3, 0
 		};
 
-		unsigned int vbo;
-		GLCall(glGenBuffers(1, &vbo));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
-
-		unsigned int ebo;
-		GLCall(glGenBuffers(1, &ebo));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+		VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
+		IndexBuffer ibo(indices, 6);
 
 		GLCall(glEnableVertexAttribArray(0));
 		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
@@ -205,8 +172,7 @@ int main(void)
 	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
 	ASSERT(location != -1);
 
-	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-
+	//GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 
 	float r = 0.0f;
 	float step = 0.05f;
