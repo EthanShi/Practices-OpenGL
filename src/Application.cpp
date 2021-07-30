@@ -8,7 +8,7 @@
 #include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-
+#include "VertexArray.h"
 
 struct ShaderPrgramSource
 {
@@ -119,51 +119,33 @@ int main(void)
 		std::cout << glGetString(GL_VERSION) << std::endl;
 	}
 
-	unsigned int vao1;
-	GLCall(glGenVertexArrays(1, &vao1));
-	GLCall(glBindVertexArray(vao1));
-	{
-		float positions[] = {
-			-0.5f, -0.5f,
-			 0.5f, -0.5f,
-			 0.5f,  0.5f,
-			-0.5f,  0.5f
-		};
+	float positions[] = {
+		-0.5f, -0.5f,
+		 0.5f, -0.5f,
+		 0.5f,  0.5f,
+		-0.5f,  0.5f
+	};
 
-		unsigned int indices[] = {
-			0, 1, 2,
-			2, 3, 0
-		};
+	unsigned int indices1[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
 
-		VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
-		IndexBuffer ibo(indices, 6);
+	unsigned int indices2[] = {
+		1, 2, 3,
+		2, 3, 0
+	};
 
-		GLCall(glEnableVertexAttribArray(0));
-		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
-	}
+	VertexArray vao1;
+	VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
+	VertexBufferLayout layout;
+	layout.Push<float>(2);
+	vao1.AddBuffer(vbo, layout);
+	IndexBuffer ibo1(indices1, 6);
 
-	unsigned int vao2;
-	GLCall(glGenVertexArrays(1, &vao2));
-	GLCall(glBindVertexArray(vao2));
-	{
-		float positions[] = {
-			-0.5f, -0.5f,
-			 0.5f, -0.5f,
-			 0.5f,  0.5f,
-			-0.5f,  0.5f
-		};
-
-		unsigned int indices[] = {
-			1, 2, 3,
-			2, 3, 0
-		};
-
-		VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
-		IndexBuffer ibo(indices, 6);
-
-		GLCall(glEnableVertexAttribArray(0));
-		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
-	}
+	VertexArray vao2;
+	vao2.AddBuffer(vbo, layout);
+	IndexBuffer ibo2(indices2, 6);
 
 	ShaderPrgramSource source = ParseShader("res/shader/firstTriangle.shader");
 	unsigned int shader = CreateShader(source.VertexShaderSource, source.FragmentShaderSource);
@@ -188,12 +170,14 @@ int main(void)
 		if (r > 1.0f)
 		{
 			step = -0.05f;
-			GLCall(glBindVertexArray(vao1));
+			vao1.Bind();
+			ibo1.Bind();
 		}
 		else if (r < 0.0f)
 		{
 			step = 0.05f;
-			GLCall(glBindVertexArray(vao2));
+			vao2.Bind();
+			ibo2.Bind();
 		}
 		r += step;
 
