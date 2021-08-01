@@ -9,82 +9,8 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-
-struct ShaderPrgramSource
-{
-	std::string VertexShaderSource;
-	std::string FragmentShaderSource;
-};
-
-static ShaderPrgramSource ParseShader(const std::string& filepath)
-{
-	std::ifstream stream(filepath);
-
-	std::string line;
-	std::stringstream vs;
-	std::stringstream fs;
-	std::stringstream* cur = &vs;
-	while (getline(stream, line))
-	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-			{
-				cur = &vs;
-			}
-			else
-			{
-				cur = &fs;
-			}
-		}
-		else
-		{
-			*cur << line << '\n';
-		}
-	}
-
-	return { vs.str(), fs.str() };
-}
-
-static unsigned int CompileShader(unsigned int type, const std::string& source)
-{
-	GLCall(unsigned int id = glCreateShader(type));
-	const char* src = source.c_str();
-	GLCall(glShaderSource(id, 1, &src, nullptr));
-	GLCall(glCompileShader(id));
-
-	int result;
-	GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
-	if (result == GL_FALSE)
-	{
-		int length;
-		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
-		char* message = (char*)alloca(length * sizeof(char));
-		GLCall(glGetShaderInfoLog(id, length, &length, message));
-		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << std::endl;
-		std::cout << message << std::endl;
-	}
-
-	return id;
-}
-
-
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
-{
-	GLCall(unsigned int program = glCreateProgram());
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-	GLCall(glAttachShader(program, vs));
-	GLCall(glAttachShader(program, fs));
-	GLCall(glLinkProgram(program));
-	GLCall(glValidateProgram(program));
-
-	GLCall(glDetachShader(program, vs));
-	GLCall(glDetachShader(program, fs));
-
-	return program;
-}
+#include "Shader.h"
+#include "Renderer.h"
 
 
 int main(void)
@@ -147,14 +73,9 @@ int main(void)
 	vao2.AddBuffer(vbo, layout);
 	IndexBuffer ibo2(indices2, 6);
 
-	ShaderPrgramSource source = ParseShader("res/shader/firstTriangle.shader");
-	unsigned int shader = CreateShader(source.VertexShaderSource, source.FragmentShaderSource);
-	GLCall(glUseProgram(shader));
+	Shader shader("res/shader/firstTriangle.shader");
 
-	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-	ASSERT(location != -1);
-
-	//GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+	Renderer renderer;
 
 	float r = 0.0f;
 	float step = 0.05f;
@@ -162,22 +83,22 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
+		renderer.Clear();
 
-		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		shader.Bind();
+		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+
+		renderer.Draw(vao1, ibo1, shader);
 
 		if (r > 1.0f)
 		{
 			step = -0.05f;
-			vao1.Bind();
-			ibo1.Bind();
+			renderer.Draw(vao1, ibo1, shader);
 		}
 		else if (r < 0.0f)
 		{
 			step = 0.05f;
-			vao2.Bind();
-			ibo2.Bind();
+			renderer.Draw(vao2, ibo2, shader);
 		}
 		r += step;
 
@@ -187,8 +108,6 @@ int main(void)
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
-
-	GLCall(glDeleteProgram(shader));
 
 	glfwTerminate();
 	return 0;
