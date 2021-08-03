@@ -11,6 +11,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Renderer.h"
+#include "Texture.h"
 
 
 int main(void)
@@ -22,7 +23,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -46,10 +47,10 @@ int main(void)
 	}
 
 	float positions[] = {
-		-0.5f, -0.5f,
-		 0.5f, -0.5f,
-		 0.5f,  0.5f,
-		-0.5f,  0.5f
+		-0.5f, -0.5f, 0.0f, 0.0f,
+		 0.5f, -0.5f, 1.0f, 0.0f,
+		 0.5f,  0.5f, 1.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f, 1.0f
 	};
 
 	unsigned int indices1[] = {
@@ -63,8 +64,9 @@ int main(void)
 	};
 
 	VertexArray vao1;
-	VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
+	VertexBuffer vbo(positions, 4 * 4 * sizeof(float));
 	VertexBufferLayout layout;
+	layout.Push<float>(2);
 	layout.Push<float>(2);
 	vao1.AddBuffer(vbo, layout);
 	IndexBuffer ibo1(indices1, 6);
@@ -74,6 +76,11 @@ int main(void)
 	IndexBuffer ibo2(indices2, 6);
 
 	Shader shader("res/shader/firstTriangle.shader");
+	shader.Bind();
+
+	Texture texture("res/texture/squama.jpg");
+	texture.Bind(2);
+	shader.SetUniform1i("u_Texture", 2);
 
 	Renderer renderer;
 
@@ -85,7 +92,6 @@ int main(void)
 		/* Render here */
 		renderer.Clear();
 
-		shader.Bind();
 		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
 		renderer.Draw(vao1, ibo1, shader);
