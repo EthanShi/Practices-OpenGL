@@ -5,6 +5,9 @@
 #include <string>
 #include <sstream>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 #include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -81,6 +84,9 @@ int main(void)
 	Texture texture("res/texture/squama.jpg");
 	texture.Bind(2);
 	shader.SetUniform1i("u_Texture", 2);
+
+	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+	shader.SetUniformMat4f("u_MVP", proj);
 
 	Renderer renderer;
 
