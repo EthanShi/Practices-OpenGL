@@ -28,7 +28,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(720, 480, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -52,10 +52,10 @@ int main(void)
 	}
 
 	float positions[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 1.0f
+		-50.0f, -50.0f, 0.0f, 0.0f,
+		 50.0f, -50.0f, 1.0f, 0.0f,
+		 50.0f,  50.0f, 1.0f, 1.0f,
+		-50.0f,  50.0f, 0.0f, 1.0f
 	};
 
 	unsigned int indices1[] = {
@@ -87,8 +87,8 @@ int main(void)
 	texture.Bind(2);
 	shader.SetUniform1i("u_Texture", 2);
 
-	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-	shader.SetUniformMat4f("u_MVP", proj);
+	glm::mat4 proj = glm::ortho(0.0f, 720.0f, 0.0f, 480.0f, -1.0f, 1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 	Renderer renderer;
 
@@ -102,29 +102,19 @@ int main(void)
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	float r = 0.0f;
-	float step = 0.05f;
+	float location[2] = {0.0f, 0.0f};
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		renderer.Clear();
+		
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1, 2, 0));
+		glm::mat4 mvp = model * view * proj;
 
-		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
+		shader.Bind();
+		shader.SetUniformMat4f("u_MVP", mvp);
 		renderer.Draw(vao1, ibo1, shader);
-
-		if (r > 1.0f)
-		{
-			step = -0.05f;
-			renderer.Draw(vao1, ibo1, shader);
-		}
-		else if (r < 0.0f)
-		{
-			step = 0.05f;
-			renderer.Draw(vao2, ibo2, shader);
-		}
-		r += step;
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -132,22 +122,9 @@ int main(void)
 		ImGui::NewFrame();
 
 		{
-			static float f = 0.0f;
-			static int counter = 0;
+			ImGui::Begin("Settings");                          // Create a window called "Hello, world!" and append into it.
 
-			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-			ImGui::Checkbox("Another Window", &show_another_window);
-
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-				counter++;
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
+			ImGui::SliderFloat2("Location", location, 0.0f, 720.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
