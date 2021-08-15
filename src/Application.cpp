@@ -102,19 +102,29 @@ int main(void)
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	float location[2] = {0.0f, 0.0f};
+	float location1[2] = { 0.0f, 0.0f };
+	float location2[2] = { 0.0f, 0.0f };
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		renderer.Clear();
 		
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1, 2, 0));
-		glm::mat4 mvp = model * view * proj;
-
 		shader.Bind();
-		shader.SetUniformMat4f("u_MVP", mvp);
-		renderer.Draw(vao1, ibo1, shader);
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(location1[0], location1[1], 0));
+			glm::mat4 mvp = proj * view * model;
+
+			shader.SetUniformMat4f("u_MVP", mvp);
+			renderer.Draw(vao1, ibo1, shader);
+		}
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(location2[0], location2[1], 0));
+			glm::mat4 mvp = proj * view * model;
+
+			shader.SetUniformMat4f("u_MVP", mvp);
+			renderer.Draw(vao1, ibo1, shader);
+		}
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -124,7 +134,8 @@ int main(void)
 		{
 			ImGui::Begin("Settings");                          // Create a window called "Hello, world!" and append into it.
 
-			ImGui::SliderFloat2("Location", location, 0.0f, 720.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::SliderFloat2("Location1", location1, 0.0f, 720.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::SliderFloat2("Location2", location2, 0.0f, 720.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
