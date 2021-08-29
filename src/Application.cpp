@@ -18,6 +18,7 @@
 #include "Renderer.h"
 #include "Texture.h"
 
+#include "Test\Test.h"
 #include "Test\TestClearColor.h"
 
 
@@ -53,33 +54,42 @@ int main(void)
 		std::cout << glGetString(GL_VERSION) << std::endl;
 	}
 
-	// Our state
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	Test::TestClearColor testClearColor;
+	test::Test* currentTest = nullptr;
+	test::TestMenu* testMenu = new test::TestMenu(currentTest);
+	currentTest = testMenu;
+
+	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		testClearColor.OnUpdate(0.0f);
-		testClearColor.OnRender();
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		if (currentTest)
 		{
+			currentTest->OnUpdate(0.0f);
+			currentTest->OnRender();
+
 			ImGui::Begin("Tests");                          // Create a window called "Hello, world!" and append into it.
 
-			testClearColor.OnImguiRender();
+			if (currentTest != testMenu && ImGui::Button("<-"))
+			{
+				delete currentTest;
+				currentTest = testMenu;
+			}
+
+			currentTest->OnImguiRender();
 			
 			ImGui::End();
 		}
@@ -93,6 +103,12 @@ int main(void)
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	if (currentTest != testMenu)
+	{
+		delete testMenu;
+	}
+	delete currentTest;
 
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();

@@ -1,13 +1,13 @@
 #pragma once
 #include "Test.h"
 
-namespace Test {
+namespace test {
 
 	class TestClearColor : public Test
 	{
 	public:
 		TestClearColor();
-		virtual ~TestClearColor() {}
+		~TestClearColor() override {};
 
 		virtual void OnRender();
 		virtual void OnImguiRender();
