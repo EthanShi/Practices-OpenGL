@@ -6,6 +6,9 @@ namespace test {
 
 	class TestTexture2D : public Test
 	{
+	private:
+
+
 	public:
 		TestTexture2D() {};
 		virtual ~TestTexture2D() override {}

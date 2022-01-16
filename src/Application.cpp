@@ -10,17 +10,17 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "Renderer.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Renderer.h"
-#include "Texture.h"
-
 #include "Test\Test.h"
 #include "Test\TestClearColor.h"
+#include "Test\TestSimpleRectangle.h"
 
+#include "Renderer.h"
+
+void RegisterTests(test::TestMenu* testMenu)
+{
+	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+	testMenu->RegisterTest<test::TestSimpleRectangle>("Simple Rectangle");
+}
 
 int main(void)
 {
@@ -31,7 +31,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(720, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -61,9 +61,8 @@ int main(void)
 
 	test::Test* currentTest = nullptr;
 	test::TestMenu* testMenu = new test::TestMenu(currentTest);
+	RegisterTests(testMenu);
 	currentTest = testMenu;
-
-	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))

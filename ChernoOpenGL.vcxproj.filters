@@ -69,9 +69,13 @@
     <ClCompile Include="src\Test\Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Test\TestSimpleRectangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\firstTriangle.shader" />
+    <None Include="res\shader\test\testSimpleRectangle.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -129,6 +133,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Test\TestClearColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Test\TestSimpleRectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

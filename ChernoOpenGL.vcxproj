@@ -24,6 +24,7 @@
     <ProjectGuid>{8c32d5d3-5851-493e-bd2e-fb8909785f22}</ProjectGuid>
     <RootNamespace>ChernoOpenGL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>PracticeOpenGL</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -177,9 +178,11 @@
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Test\TestClearColor.cpp" />
+    <ClCompile Include="src\Test\TestSimpleRectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\firstTriangle.shader" />
+    <None Include="res\shader\test\testSimpleRectangle.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RendererUtils.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Test\TestClearColor.h" />
+    <ClInclude Include="src\Test\TestSimpleRectangle.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\texture\squama.jpg" />
