@@ -15,11 +15,17 @@
 #include "Test\TestSimpleRectangle.h"
 
 #include "Renderer.h"
+#include "Input.h"
 
 void RegisterTests(test::TestMenu* testMenu)
 {
 	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 	testMenu->RegisterTest<test::TestSimpleRectangle>("Simple Rectangle");
+}
+
+void OnSpacePress()
+{
+	std::cout << "On Space Press" << std::endl;
 }
 
 int main(void)
@@ -75,12 +81,14 @@ int main(void)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		Input::ProcessInput();
+
 		if (currentTest)
 		{
 			currentTest->OnUpdate(0.0f);
 			currentTest->OnRender();
 
-			ImGui::Begin("Tests");                          // Create a window called "Hello, world!" and append into it.
+			ImGui::Begin("Tests");
 
 			if (currentTest != testMenu && ImGui::Button("<-"))
 			{
