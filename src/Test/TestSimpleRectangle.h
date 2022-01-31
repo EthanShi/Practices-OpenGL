@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Test.h"
+#include <memory>
 
 class VertexBuffer;
 class VertexBufferLayout;
@@ -13,17 +14,17 @@ namespace test
 	class TestSimpleRectangle : public Test
 	{
 	private:
-		VertexBuffer* m_VertexBuffer;
-		VertexBufferLayout* m_VertexBufferLayout;
-		VertexArray * m_VertexArray;
-		IndexBuffer* m_IndexBuffer;
-		Shader* m_Shader;
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		std::shared_ptr<VertexBufferLayout> m_VertexBufferLayout;
+		std::shared_ptr<VertexArray> m_VertexArray;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::shared_ptr<Shader> m_Shader;
 
 		float m_VerticesColor[4][4];
 
 	public:
 		TestSimpleRectangle();
-		~TestSimpleRectangle();
+		~TestSimpleRectangle() override {}
 
 		virtual void OnUpdate(float deltaTime);
 		virtual void OnRender();

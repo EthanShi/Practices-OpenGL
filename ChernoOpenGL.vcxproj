@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\RendererUtils.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Test\Test.cpp" />
+    <ClCompile Include="src\Test\TestTexture2D.cpp" />
     <ClCompile Include="src\Vendor\imgui\imgui.cpp" />
     <ClCompile Include="src\Vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\Vendor\imgui\imgui_draw.cpp" />
@@ -182,16 +184,21 @@
     <ClCompile Include="src\Test\TestSimpleRectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shader\basic.shader" />
+    <None Include="res\shader\basic3D.shader" />
     <None Include="res\shader\firstTriangle.shader" />
     <None Include="res\shader\test\testSimpleRectangle.shader" />
+    <None Include="res\shader\test\testTexture2D.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\RendererUtils.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Test\Test.h" />
+    <ClInclude Include="src\Test\TestTexture2D.h" />
     <ClInclude Include="src\Vendor\imgui\imconfig.h" />
     <ClInclude Include="src\Vendor\imgui\imgui.h" />
     <ClInclude Include="src\Vendor\imgui\imgui_impl_glfw.h" />

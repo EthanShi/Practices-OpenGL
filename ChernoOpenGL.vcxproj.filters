@@ -75,10 +75,19 @@
     <ClCompile Include="src\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Test\TestTexture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\firstTriangle.shader" />
     <None Include="res\shader\test\testSimpleRectangle.shader" />
+    <None Include="res\shader\basic3D.shader" />
+    <None Include="res\shader\test\testTexture2D.shader" />
+    <None Include="res\shader\basic.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -142,6 +151,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Test\TestTexture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

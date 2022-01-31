@@ -19,12 +19,12 @@ namespace test
 			-0.5f,  0.5f, 0.0f, 0.5f, 1.0f, 1.0f,
 			-0.5f,  -0.5f, 0.0f, 0.5f, 1.0f, 1.0f,
 		};
-		m_VertexBuffer = new ::VertexBuffer(vertices, sizeof(vertices), GL_DYNAMIC_DRAW);
-		m_VertexBufferLayout = new VertexBufferLayout();
+		m_VertexBuffer = std::make_shared<VertexBuffer>(vertices, (unsigned int)sizeof(vertices), GL_DYNAMIC_DRAW);
+		m_VertexBufferLayout = std::make_shared<VertexBufferLayout>();
 		m_VertexBufferLayout->Push<float>(3);
 		m_VertexBufferLayout->Push<float>(3);
 
-		m_VertexArray = new VertexArray;
+		m_VertexArray = std::make_shared<VertexArray>();
 		m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 		m_VertexArray->Bind();
 
@@ -33,18 +33,11 @@ namespace test
 			2, 1, 3
 		};
 
-		m_IndexBuffer = new IndexBuffer(indexes, 6);
+		m_IndexBuffer = std::make_shared<IndexBuffer>(indexes, 6);
 
-		m_Shader = new Shader("res\\shader\\test\\testSimpleRectangle.shader");
+		m_Shader = std::make_shared<Shader>("res\\shader\\test\\testSimpleRectangle.shader");
 
 		memset(m_VerticesColor, 0, sizeof(float) * 4 * 4);
-	}
-
-	TestSimpleRectangle::~TestSimpleRectangle()
-	{
-		delete m_VertexBuffer;
-		delete m_VertexArray;
-		delete m_IndexBuffer;
 	}
 
 	void TestSimpleRectangle::OnUpdate(float deltaTime)

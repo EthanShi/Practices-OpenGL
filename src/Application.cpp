@@ -13,6 +13,7 @@
 #include "Test\Test.h"
 #include "Test\TestClearColor.h"
 #include "Test\TestSimpleRectangle.h"
+#include "Test\TestTexture2D.h"
 
 #include "Renderer.h"
 #include "Input.h"
@@ -21,6 +22,7 @@ void RegisterTests(test::TestMenu* testMenu)
 {
 	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 	testMenu->RegisterTest<test::TestSimpleRectangle>("Simple Rectangle");
+	testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
 }
 
 void OnSpacePress()
