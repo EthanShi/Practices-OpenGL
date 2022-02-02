@@ -1,6 +1,9 @@
 #include "TestTexture2D.h"
 
-#include "imgui\imgui.h"
+#include  <iostream>
+
+#include "imgui/imgui.h"
+#include "glm/glm.hpp"
 
 #include "Renderer.h"
 #include "Shader.h"
@@ -14,10 +17,10 @@ namespace test {
 	TestTexture2D::TestTexture2D()
 	{
 		float vertices[] = {
-			 0.5f,	0.5f,	0.0f,	1.0f,	1.0f,
-			 0.5f,	-0.5f,	0.0f,	1.0f,	0.f,
-			-0.5f,	0.5f,	0.0f,	0.f,	1.0f,
-			-0.5f,	-0.5f,	0.0f,	0.0f,	0.0f,
+			400.f,	400.f,	0.0f,	1.0f,	1.0f,
+			400.f,	100.f,	0.0f,	1.0f,	0.f,
+			100.f,	400.f,	0.0f,	0.f,	1.0f,
+			100.f,	100.f,	0.0f,	0.0f,	0.0f,
 		};
 		m_VertexBuffer = std::make_shared<VertexBuffer>(vertices, (unsigned int)sizeof(vertices), GL_STATIC_DRAW);
 		m_VertexBufferLayout = std::make_shared<VertexBufferLayout>();
@@ -35,7 +38,11 @@ namespace test {
 
 		m_IndexBuffer = std::make_shared<IndexBuffer>(indexes, 6);
 
-		m_Shader = std::make_shared<Shader>("res\\shader\\test\\testTexture2D.shader");
+		m_Shader = std::make_shared<Shader>("res\\shader\\basic3D.shader");
+		m_Shader->Bind();
+		m_Shader->SetUniformMat4f("model", glm::mat4(1.0f));
+		m_Shader->SetUniformMat4f("view", glm::mat4(1.0f));
+		m_Shader->SetUniformMat4f("projection", glm::mat4(1.0f));
 
 		m_Texture = std::make_shared<Texture>("res\\texture\\squama.jpg");
 		m_Texture->Bind(0);

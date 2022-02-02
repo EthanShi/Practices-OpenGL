@@ -25,9 +25,10 @@ void RegisterTests(test::TestMenu* testMenu)
 	testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
 }
 
-void OnSpacePress()
+void OnFrameSizeChanged(GLFWwindow* window, int width, int height)
 {
-	std::cout << "On Space Press" << std::endl;
+	glViewport(0, 0, width, height);
+	Renderer::OnWindowSizeChanged(height, width);
 }
 
 int main(void)
@@ -48,6 +49,9 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
+
+	/* Set frame size callback */
+	glfwSetFramebufferSizeCallback(window, OnFrameSizeChanged);
 
 	glfwSwapInterval(5);
 
