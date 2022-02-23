@@ -55,7 +55,7 @@ namespace test
 	{
 		Renderer::SetClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		Renderer::Clear();
-		Renderer::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+		Renderer::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader, glm::mat4(1.0));
 	}
 
 	void TestSimpleRectangle::OnImguiRender()

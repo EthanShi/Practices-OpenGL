@@ -4,16 +4,20 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <ctime>
+#include <chrono>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "flecs/flecs.h"
 
-#include "Test\Test.h"
-#include "Test\TestClearColor.h"
-#include "Test\TestSimpleRectangle.h"
-#include "Test\TestTexture2D.h"
+#include "Test/Test.h"
+#include "Test/TestClearColor.h"
+#include "Test/TestSimpleRectangle.h"
+#include "Test/TestTexture2D.h"
+#include "Test/TestCamera3D.h"
 
 #include "Renderer.h"
 #include "Input.h"
@@ -23,6 +27,7 @@ void RegisterTests(test::TestMenu* testMenu)
 	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 	testMenu->RegisterTest<test::TestSimpleRectangle>("Simple Rectangle");
 	testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
+	testMenu->RegisterTest<test::TestCamera3D>("Camera 3D");
 }
 
 void OnFrameSizeChanged(GLFWwindow* window, int width, int height)
@@ -40,7 +45,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -52,6 +57,7 @@ int main(void)
 
 	/* Set frame size callback */
 	glfwSetFramebufferSizeCallback(window, OnFrameSizeChanged);
+	OnFrameSizeChanged(window, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
 	glfwSwapInterval(5);
 
@@ -76,11 +82,30 @@ int main(void)
 	RegisterTests(testMenu);
 	currentTest = testMenu;
 
+	// Set default camera
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
+	camera->SetPostion(glm::vec3(0.0f, 0.0f, 10.0f));
+	Renderer::SetCamera(camera);
+	Renderer::SetUnit(RendererUnit::Centimeter);
+	Renderer::SetDepthTestEnable(true);
+
+	// Set Input
+	Input::InitInput(window);
+
+	auto lastFrameTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch()
+	).count();
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
+		auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::system_clock::now().time_since_epoch()
+		).count();
+		float deltaTime = (currentTime - lastFrameTime) * 0.001f;
+		lastFrameTime = currentTime;
+
+		Renderer::Clear();
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -91,7 +116,7 @@ int main(void)
 
 		if (currentTest)
 		{
-			currentTest->OnUpdate(0.0f);
+			currentTest->OnUpdate(deltaTime);
 			currentTest->OnRender();
 
 			ImGui::Begin("Tests");
